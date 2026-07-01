@@ -11,6 +11,8 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
+const name = "grep"
+
 // Error is the sentinel error type for the yup-grep wrapper. It lets every
 // error path this package raises be matched with errors.Is.
 type Error string
@@ -53,7 +55,7 @@ func run(version string, args []string, stdin io.Reader, stdout, stderr io.Write
 	cmd.Writer = stdout
 	cmd.ErrWriter = stderr
 	if err := cmd.Run(context.Background(), args); err != nil {
-		_, _ = fmt.Fprintf(stderr, "grep: %v\n", err)
+		_, _ = fmt.Fprintf(stderr, name+": %v\n", err)
 		return 1
 	}
 	return 0
@@ -61,7 +63,7 @@ func run(version string, args []string, stdin io.Reader, stdout, stderr io.Write
 
 func newApp(version string, stdin io.Reader, stdout io.Writer, fs afero.Fs) *cli.Command {
 	return &cli.Command{
-		Name:            "grep",
+		Name:            name,
 		Version:         version,
 		Usage:           "search for patterns in files",
 		UsageText:       usageText,
@@ -116,19 +118,19 @@ func source(c *cli.Command, stdin io.Reader, fs afero.Fs) any {
 
 // flagOption pairs a CLI flag name with the library option it enables.
 type flagOption struct {
-	name   string
 	option any
+	name   string
 }
 
 func flagOptions() []flagOption {
 	return []flagOption{
-		{flagIgnoreCase, command.GrepIgnoreCase},
-		{flagInvertMatch, command.GrepInvert},
-		{flagLineNumber, command.GrepLineNumbers},
-		{flagCount, command.GrepCount},
-		{flagWord, command.GrepWord},
-		{flagLine, command.GrepWholeLine},
-		{flagExtended, command.GrepExtended},
+		{name: flagIgnoreCase, option: command.GrepIgnoreCase},
+		{name: flagInvertMatch, option: command.GrepInvert},
+		{name: flagLineNumber, option: command.GrepLineNumbers},
+		{name: flagCount, option: command.GrepCount},
+		{name: flagWord, option: command.GrepWord},
+		{name: flagLine, option: command.GrepWholeLine},
+		{name: flagExtended, option: command.GrepExtended},
 	}
 }
 
