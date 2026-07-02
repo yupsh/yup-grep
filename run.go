@@ -41,16 +41,16 @@ const (
 	flagExtended    = "extended-regexp"
 )
 
-// init replaces urfave/cli's default --version/-v flag with a --version-only
-// flag, freeing the single-letter -v for command flags (e.g. grep -v) while
-// still exposing the injected build version.
-func init() {
-	cli.VersionFlag = &cli.BoolFlag{Name: "version", Usage: "print version information and exit"}
-}
+// buildVersion is the binary's build version threaded from main's ldflags
+// target (`var version`) into the CLI. It is an alias, not a defined type:
+// cli.Command.Version is a plain string and must be wired as the bare
+// `version` identifier (no conversion) for --version to stay verifiably
+// bound to the ldflags symbol.
+type buildVersion = string
 
 // run builds and executes the grep CLI against the injected version, I/O, and
 // filesystem, returning the process exit code.
-func run(version string, args []string, stdin io.Reader, stdout, stderr io.Writer, fs afero.Fs) int {
+func run(version buildVersion, args []string, stdin io.Reader, stdout, stderr io.Writer, fs afero.Fs) int {
 	cmd := newApp(version, stdin, stdout, fs)
 	cmd.Writer = stdout
 	cmd.ErrWriter = stderr
@@ -61,7 +61,12 @@ func run(version string, args []string, stdin io.Reader, stdout, stderr io.Write
 	return 0
 }
 
-func newApp(version string, stdin io.Reader, stdout io.Writer, fs afero.Fs) *cli.Command {
+func newApp(version buildVersion, stdin io.Reader, stdout io.Writer, fs afero.Fs) *cli.Command {
+	// Replace urfave/cli's default --version/-v flag with a --version-only
+	// flag, freeing the single-letter -v for command flags (e.g. grep -v)
+	// while still exposing the injected build version. Done here rather than
+	// in func init so construction stays explicit.
+	cli.VersionFlag = &cli.BoolFlag{Name: "version", Usage: "print version information and exit"}
 	return &cli.Command{
 		Name:            name,
 		Version:         version,
