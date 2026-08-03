@@ -46,16 +46,47 @@ var spec = clix.Spec{
 	Synopsis: synopsis,
 	Build:    build,
 	Flags: []urf.Flag{
-		&urf.BoolFlag{Name: flagIgnoreCase, Aliases: []string{"i"}, Usage: "ignore case distinctions"},
-		&urf.BoolFlag{Name: flagInvertMatch, Aliases: []string{"v"}, Usage: "select non-matching lines"},
-		&urf.BoolFlag{Name: flagLineNumber, Aliases: []string{"n"}, Usage: "prefix each line with its line number"},
-		&urf.BoolFlag{Name: flagCount, Aliases: []string{"c"}, Usage: "print only a count of matching lines"},
-		&urf.BoolFlag{Name: flagWord, Aliases: []string{"w"}, Usage: "match only whole words"},
-		&urf.BoolFlag{Name: flagLine, Aliases: []string{"x"}, Usage: "match only whole lines"},
+		&urf.BoolFlag{
+			Name:    flagIgnoreCase,
+			Aliases: []string{"i"},
+			Usage:   "ignore case distinctions",
+			Sources: urf.EnvVars("YUP_GREP_IGNORE_CASE"),
+		},
+		&urf.BoolFlag{
+			Name:    flagInvertMatch,
+			Aliases: []string{"v"},
+			Usage:   "select non-matching lines",
+			Sources: urf.EnvVars("YUP_GREP_INVERT_MATCH"),
+		},
+		&urf.BoolFlag{
+			Name:    flagLineNumber,
+			Aliases: []string{"n"},
+			Usage:   "prefix each line with its line number",
+			Sources: urf.EnvVars("YUP_GREP_LINE_NUMBER"),
+		},
+		&urf.BoolFlag{
+			Name:    flagCount,
+			Aliases: []string{"c"},
+			Usage:   "print only a count of matching lines",
+			Sources: urf.EnvVars("YUP_GREP_COUNT"),
+		},
+		&urf.BoolFlag{
+			Name:    flagWord,
+			Aliases: []string{"w"},
+			Usage:   "match only whole words",
+			Sources: urf.EnvVars("YUP_GREP_WORD_REGEXP"),
+		},
+		&urf.BoolFlag{
+			Name:    flagLine,
+			Aliases: []string{"x"},
+			Usage:   "match only whole lines",
+			Sources: urf.EnvVars("YUP_GREP_LINE_REGEXP"),
+		},
 		&urf.BoolFlag{
 			Name:    flagExtended,
 			Aliases: []string{"E"},
 			Usage:   "interpret PATTERN as an extended regular expression",
+			Sources: urf.EnvVars("YUP_GREP_EXTENDED_REGEXP"),
 		},
 	},
 }
